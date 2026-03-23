@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: curso-gitops-svc
+  namespace: curso-gitops
+  labels:
+    app: curso-gitops
+spec:
+  # NodePort — expone la app directamente en el puerto de la EC2
+  # Acceso: http://<IP_EC2>:30081
+  # (LoadBalancer dejaría el Service en <pending> en K3s sin cloud provider)
+  type: NodePort
+  selector:
+    app: curso-gitops
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+      # Puerto 30081 abierto en el Security Group desde el EP22
+      nodePort: 30081

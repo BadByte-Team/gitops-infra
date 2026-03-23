@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curso-gitops
+  namespace: curso-gitops
+  labels:
+    app: curso-gitops
+spec:
+  # Una réplica para conservar RAM en t2.micro
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curso-gitops
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: curso-gitops
+    spec:
+      containers:
+        - name: curso-gitops
+          # ⚠️ Jenkins actualiza esta línea con sed en cada build
+          image: TU_USUARIO_DOCKERHUB/curso-gitops:latest
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            # Conexión a MySQL vía DNS interno del Service
+            - name: DB_HOST
+              value: "mysql-svc"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "curso_db"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: jwt-secret
+            - name: PORT
+              value: "8080"
+          # Readiness probe — K3s no envía tráfico hasta que pase
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+          # Liveness probe — reinicia el pod si la app no responde
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            failureThreshold: 3
