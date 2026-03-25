@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket         = "curso-gitops-terraform-state"
     key            = "ec2-prod/terraform.tfstate"
-    region         = "us-east-1"
+    region         = "us-east-2"
     dynamodb_table = "curso-gitops-terraform-locks"
     encrypt        = true
   }

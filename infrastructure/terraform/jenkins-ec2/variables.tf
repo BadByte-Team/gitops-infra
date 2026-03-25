@@ -1,13 +1,13 @@
 variable "region" {
   description = "Región de AWS"
   type        = string
-  default     = "us-east-1"
+  default     = "us-east-2"
 }
 
 variable "ami_id" {
-  description = "AMI de Ubuntu 22.04 LTS (us-east-1)"
+  description = "AMI de Ubuntu 22.04 LTS (us-east-2)"
   type        = string
-  default     = "ami-0c7217cdde317cfec"
+  default     = "ami-0d6d5a1f326b57cb0"
 }
 
 variable "instance_type" {
