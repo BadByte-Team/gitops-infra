@@ -11,9 +11,9 @@ variable "ami_id" {
 }
 
 variable "instance_type" {
-  description = "Tipo de instancia — t2.micro es Free Tier"
+  description = "Tipo de instancia — t3.micro es Free Tier"
   type        = string
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "key_name" {

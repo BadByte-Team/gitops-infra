@@ -18,7 +18,7 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
-          # Límites críticos para t2.micro (1GB RAM total)
+          # Límites críticos para t3.micro (1GB RAM total)
           resources:
             requests:
               memory: "128Mi"

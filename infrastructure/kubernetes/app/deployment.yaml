@@ -6,7 +6,7 @@ metadata:
   labels:
     app: curso-gitops
 spec:
-  # Una réplica para conservar RAM en t2.micro
+  # Una réplica para conservar RAM en t3.micro
   replicas: 1
   selector:
     matchLabels:

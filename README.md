@@ -13,7 +13,7 @@ Repositorio de **infraestructura y configuración** del curso. Contiene los arch
 ### Terraform
 Código de infraestructura para crear en AWS:
 - Un bucket S3 + tabla DynamoDB (backend para el state de Terraform)
-- Una instancia EC2 t2.micro con su Security Group (el servidor donde vive K3s)
+- Una instancia EC2 t3.micro con su Security Group (el servidor donde vive K3s)
 
 ### Kubernetes (7 manifiestos)
 Los recursos que ArgoCD despliega en el namespace `curso-gitops`:
@@ -45,7 +45,7 @@ gitops-infra/
 │   │   └── jenkins-ec2/
 │   │       ├── main.tf          # Crea aws_security_group + aws_instance
 │   │       │                    # Security Group: puertos 22, 30080, 30081, 6443
-│   │       │                    # EC2: t2.micro, Ubuntu 22.04, disco 30GB gp3 encriptado
+│   │       │                    # EC2: t3.micro, Ubuntu 22.04, disco 30GB gp3 encriptado
 │   │       │                    # Backend S3 configurado (guarda el state en la nube)
 │   │       ├── variables.tf     # region, ami_id, instance_type, key_name, allowed_cidr
 │   │       └── outputs.tf       # prod_public_ip, prod_public_dns, argocd_url, app_url
@@ -83,7 +83,7 @@ gitops-infra/
 | `backend/` (aplicar) | **EP20 — Backend remoto** | Se ejecuta `terraform init && terraform apply` en esta carpeta por primera y única vez |
 | `jenkins-ec2/main.tf` | **EP19 — Primeros pasos IaC** | Se lee el archivo para entender los bloques HCL (provider, resource, variable) antes de escribirlos desde cero en un ejemplo |
 | `jenkins-ec2/main.tf` | **EP21 — Comandos esenciales** | Se ejecuta `terraform plan` y se lee el output en voz alta — práctica del ciclo init → validate → plan → apply |
-| `jenkins-ec2/variables.tf` | **EP22 — EC2 para K3s** | Se muestra que `instance_type = "t2.micro"` es la clave que hace el stack gratuito |
+| `jenkins-ec2/variables.tf` | **EP22 — EC2 para K3s** | Se muestra que `instance_type = "t3.micro"` es la clave que hace el stack gratuito |
 | `jenkins-ec2/` (aplicar) | **EP22** | Se ejecuta `terraform apply -var="key_name=aws-key"` — se crea el servidor de producción |
 | `jenkins-ec2/outputs.tf` | **EP22** | Se muestra la IP pública que se usará en EP28, EP30 y EP39 |
 | `jenkins-ec2/` (destruir) | **EP49 — Limpieza** | Se ejecuta `terraform destroy` — se elimina la EC2 y el Security Group |
@@ -95,7 +95,7 @@ gitops-infra/
 | `namespace.yaml` | **EP25 — Primer despliegue K8s** | Se explica qué es un namespace y para qué sirve el aislamiento |
 | `secrets.yaml` | **EP47 — BD separada y manifiestos** | Se explica que Base64 no es cifrado, cómo generar los valores y por qué usar `secretKeyRef` en lugar de poner la contraseña directamente |
 | `mysql-configmap.yaml` | **EP47** | Se explica la diferencia entre Secret (datos sensibles) y ConfigMap (configuración). Se muestra que MySQL ejecuta el SQL automáticamente en `/docker-entrypoint-initdb.d/` |
-| `mysql-deployment.yaml` | **EP47** | Se explica `resources.limits` (crítico en t2.micro), `secretKeyRef`, y por qué MySQL no puede ir en el mismo pod que la app |
+| `mysql-deployment.yaml` | **EP47** | Se explica `resources.limits` (crítico en t3.micro), `secretKeyRef`, y por qué MySQL no puede ir en el mismo pod que la app |
 | `mysql-service.yaml` | **EP47** | Se explica ClusterIP vs NodePort y por qué MySQL debe ser solo interno |
 | `deployment.yaml` | **EP47** | Se explica `readinessProbe`, `livenessProbe`, `replicas: 1`, y que Jenkins actualiza la línea `image:` con `sed` en cada build |
 | `service.yaml` | **EP47** | Se explica por qué NodePort en lugar de LoadBalancer (LoadBalancer queda en `<pending>` en K3s sin cloud provider) |
@@ -257,7 +257,7 @@ kubectl create namespace argocd
 kubectl apply -n argocd \
   -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-# Esperar a que todos los pods estén Running (~3-5 minutos en t2.micro)
+# Esperar a que todos los pods estén Running (~3-5 minutos en t3.micro)
 kubectl get pods -n argocd -w
 
 # EP39 — Exponer con NodePort en puerto 30080
@@ -362,7 +362,7 @@ Kubernetes separa responsabilidades en objetos distintos. Cada archivo tiene una
 
 ### ¿Por qué `resources.limits` en los Deployments?
 
-La EC2 t2.micro tiene solo 1GB de RAM. Sin límites, un pod podría consumir toda la memoria y dejar sin recursos a K3s, ArgoCD o los otros pods. Con los límites configurados:
+La EC2 t3.micro tiene solo 1GB de RAM. Sin límites, un pod podría consumir toda la memoria y dejar sin recursos a K3s, ArgoCD o los otros pods. Con los límites configurados:
 
 | Pod | RAM máxima | RAM mínima |
 |---|---|---|
