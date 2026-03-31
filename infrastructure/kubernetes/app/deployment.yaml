@@ -24,7 +24,7 @@ spec:
       containers:
         - name: curso-gitops
           # ⚠️ Jenkins actualiza esta línea con sed en cada build
-          image: TU_USUARIO_DOCKERHUB/curso-gitops:latest
+          image: gjisus/curso-gitops:18-22fa1a1
           resources:
             requests:
               memory: "32Mi"
