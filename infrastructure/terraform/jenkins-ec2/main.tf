@@ -7,10 +7,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "curso-gitops-terraform-state"
+    bucket         = "curso-gitops-pruebas-state"
     key            = "ec2-prod/terraform.tfstate"
     region         = "us-east-2"
-    dynamodb_table = "curso-gitops-terraform-locks"
+    dynamodb_table = "curso-gitops-pruebas-locks"
     encrypt        = true
   }
 }
@@ -72,9 +72,9 @@ resource "aws_security_group" "prod_sg" {
 
 # ── EC2 Instance ───────────────────────────────────────────────────────────────
 resource "aws_instance" "prod_server" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_type
-  key_name               = var.key_name
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  key_name      = var.key_name
 
   vpc_security_group_ids = [aws_security_group.prod_sg.id]
 

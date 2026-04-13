@@ -11,9 +11,9 @@ variable "ami_id" {
 }
 
 variable "instance_type" {
-  description = "Tipo de instancia — t3.micro es Free Tier"
+  description = "Tipo de instancia — m7i-flex.large es Free Tier"
   type        = string
-  default     = "t3.micro"
+  default     = "m7i-flex.large"
 }
 
 variable "key_name" {
