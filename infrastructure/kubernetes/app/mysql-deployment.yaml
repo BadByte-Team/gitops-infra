@@ -21,7 +21,7 @@ spec:
           # Límites críticos para t3.micro (1GB RAM total)
           resources:
             requests:
-              memory: "1Gi"
+              memory: "512Mi"
               cpu: "100m"
             limits:
               memory: "512Mi"
